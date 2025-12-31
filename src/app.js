@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 
 const userRoutes = require("./routes/userRoutes");
-// const transactionRoutes = require("./routes/transactionRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const logger = require("./middleware/logger");
 
@@ -14,8 +14,8 @@ app.get("/health", (req,res)=> res.json({status:"Server running"}));
 
 app.use("/users", userRoutes);
 
-// Please complete this part of the code
-// app.use("/transactions", transactionRoutes);
+// Transactions API
+app.use("/transactions", transactionRoutes);
 // app.use("/summary", require("./utils/analytics"));
 
 app.use(errorHandler);

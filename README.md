@@ -121,3 +121,44 @@ GET /summary   Fetch income, expense and balance
 ## LICENSE
 
 MIT License © 2025
+
+---
+
+## Transactions API Details
+
+- Base: `/transactions` (requires `Authorization: Bearer <token>`)
+- Filters (GET `/transactions`): `type`, `category`, `startDate`, `endDate`, `minAmount`, `maxAmount`, `sortBy` (date|amount|category), `sortOrder` (asc|desc), `page`, `limit`.
+- Responses:
+   - List: `{ total, page, limit, items: Transaction[] }`
+   - Create: `201` with `Transaction`
+   - Get: `200` with `Transaction` or `404`
+   - Update: `200` with `Transaction` or `400/404`
+   - Delete: `204` or `404`
+
+### Windows Quick Start (PowerShell)
+
+```powershell
+cd "c:\Users\Pranav\FinEdge-Personal-Finance-Expense-Tracker-API"
+npm install
+
+# Ensure data files
+Set-Content -Path .\src\data\users.json -Value "[]" -NoNewline
+# transactions.json will be created automatically on first write
+
+# Create .env
+Set-Content -Path .\.env -Value "JWT_SECRET=finance_super_secret_key" -NoNewline
+
+npm run start
+
+# Register and login
+$reg = @{ email = "test@example.com"; password = "Passw0rd!" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri http://localhost:5000/users/register -ContentType 'application/json' -Body $reg
+$token = (Invoke-RestMethod -Method Post -Uri http://localhost:5000/users/login -ContentType 'application/json' -Body $reg).token
+
+# Create transaction
+$tBody = @{ type = "expense"; amount = 19.99; category = "food"; note = "lunch" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri http://localhost:5000/transactions -Headers @{ Authorization = "Bearer $token" } -ContentType 'application/json' -Body $tBody
+
+# List transactions
+Invoke-RestMethod -Method Get -Uri http://localhost:5000/transactions -Headers @{ Authorization = "Bearer $token" }
+```

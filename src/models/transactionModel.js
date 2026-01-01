@@ -24,7 +24,7 @@ function validateTransactionInput(input) {
 
 	const amountNum = Number(input.amount);
 	if (!Number.isFinite(amountNum) || amountNum < 0) {
-		errors.push("amount must be a non-negative number");
+		errors.push("amount must be zero or a positive number");
 	}
 
 	if (input.category != null && String(input.category).trim().length === 0) {

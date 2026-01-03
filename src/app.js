@@ -16,7 +16,7 @@ app.use("/users", userRoutes);
 
 // Transactions API
 app.use("/transactions", transactionRoutes);
-// app.use("/summary", require("./utils/analytics"));
+app.use("/summary", require("./utils/analytics"));
 
 app.use(errorHandler);
 

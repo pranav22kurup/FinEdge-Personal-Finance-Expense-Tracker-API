@@ -77,6 +77,18 @@ transactions.json
 
 Server runs on [http://localhost:5000](http://localhost:5000)
 
+## Frontend Demo
+
+A standalone dashboard demo is available in the `frontend/` folder.
+
+### Start the static server
+
+```powershell
+npm run frontend
+```
+
+Open [http://localhost:4173](http://localhost:4173) to view the dashboard.
+
 ---
 
 ## API ENDPOINTS

@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+    "frontend": "node frontend/server.js",
+    "dev:frontend": "node frontend/server.js",
     "test": "jest"
   },
   "keywords": [],

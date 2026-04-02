@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinEdge | Finance Dashboard</title>
+    <meta
+      name="description"
+      content="Standalone finance dashboard demo with summary cards, charts, transaction controls, insights, and role-based UI behavior."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="background background-a"></div>
+    <div class="background background-b"></div>
+    <div class="background background-c"></div>
+
+    <div class="app-shell">
+      <header class="topbar panel">
+        <div class="brand">
+          <div class="brand-mark">F</div>
+          <div>
+            <p class="eyebrow">Personal finance dashboard</p>
+            <h1>FinEdge</h1>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <label class="field compact-field" for="roleSelect">
+            <span>Role</span>
+            <select id="roleSelect">
+              <option value="viewer">Viewer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+
+          <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle theme">
+            <span class="icon-button-label" data-theme-label>Dark mode</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="hero panel">
+          <div class="hero-copy">
+            <p class="eyebrow">Financial snapshot</p>
+            <h2>Track balance, spending, and patterns from one clean workspace.</h2>
+            <p class="hero-text">
+              This demo uses mock data only. Switch between viewer and admin roles, explore the balance trend,
+              inspect spending categories, and search or sort transactions without any backend setup.
+            </p>
+          </div>
+
+          <div class="hero-actions">
+            <button class="primary-button" id="addTransactionButton" type="button">Add transaction</button>
+            <button class="secondary-button" id="exportJsonButton" type="button">Export JSON</button>
+            <button class="secondary-button" id="exportCsvButton" type="button">Export CSV</button>
+          </div>
+        </section>
+
+        <section class="summary-grid" id="summaryCards" aria-label="Financial summary cards"></section>
+
+        <section class="content-grid">
+          <div class="main-column">
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Time-based view</p>
+                  <h3>Balance trend</h3>
+                </div>
+                <p class="section-note">Running balance based on the full transaction set.</p>
+              </div>
+              <div class="chart-wrap">
+                <svg id="trendChart" viewBox="0 0 960 320" role="img" aria-label="Balance trend chart"></svg>
+              </div>
+            </section>
+
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Categorical view</p>
+                  <h3>Spending breakdown</h3>
+                </div>
+                <p class="section-note">Expense share by category for the current visible dataset.</p>
+              </div>
+              <div class="breakdown-layout">
+                <div class="donut-shell" aria-hidden="true">
+                  <div class="donut-core">
+                    <span id="breakdownTotal">$0</span>
+                    <small>Expense total</small>
+                  </div>
+                </div>
+                <div class="breakdown-list" id="breakdownList"></div>
+              </div>
+            </section>
+
+            <section class="panel transactions-panel">
+              <div class="section-head transactions-head">
+                <div>
+                  <p class="eyebrow">Transaction explorer</p>
+                  <h3>Transactions</h3>
+                </div>
+                <div class="filters-hint">
+                  <span id="transactionsMeta">Loading transactions...</span>
+                </div>
+              </div>
+
+              <div class="filters-grid">
+                <label class="field" for="searchInput">
+                  <span>Search</span>
+                  <input id="searchInput" type="search" placeholder="Merchant, note, or category" />
+                </label>
+
+                <label class="field" for="typeFilter">
+                  <span>Type</span>
+                  <select id="typeFilter">
+                    <option value="all">All types</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                  </select>
+                </label>
+
+                <label class="field" for="categoryFilter">
+                  <span>Category</span>
+                  <select id="categoryFilter">
+                    <option value="all">All categories</option>
+                  </select>
+                </label>
+
+                <label class="field" for="sortBySelect">
+                  <span>Sort by</span>
+                  <select id="sortBySelect">
+                    <option value="date">Date</option>
+                    <option value="amount">Amount</option>
+                    <option value="category">Category</option>
+                  </select>
+                </label>
+
+                <label class="field" for="sortOrderSelect">
+                  <span>Order</span>
+                  <select id="sortOrderSelect">
+                    <option value="desc">Descending</option>
+                    <option value="asc">Ascending</option>
+                  </select>
+                </label>
+
+                <button class="secondary-button filters-reset" id="resetFiltersButton" type="button">Reset filters</button>
+              </div>
+
+              <div class="transaction-list" id="transactionList"></div>
+            </section>
+          </div>
+
+          <aside class="sidebar-column">
+            <section class="panel role-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Role simulation</p>
+                  <h3 id="roleHeading">Viewer mode</h3>
+                </div>
+                <span class="role-pill" id="rolePill">Read only</span>
+              </div>
+              <p id="roleDescription" class="role-description">
+                Viewer users can inspect the dashboard and export data, but cannot add or edit transactions.
+              </p>
+              <button class="primary-button role-action" id="roleActionButton" type="button">Add transaction</button>
+            </section>
+
+            <section class="panel insights-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Insights</p>
+                  <h3>Quick observations</h3>
+                </div>
+              </div>
+              <div class="insight-list" id="insightList"></div>
+            </section>
+
+            <section class="panel data-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Current scope</p>
+                  <h3>Visible dataset</h3>
+                </div>
+              </div>
+              <p class="data-copy" id="visibleDataCopy">0 transactions visible.</p>
+              <p class="data-copy muted">
+                Changes to role, theme, and transaction edits persist in local storage so the demo feels stateful.
+              </p>
+            </section>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="transaction-dialog" id="transactionDialog">
+      <form class="dialog-card" id="transactionForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">Admin action</p>
+            <h3 id="dialogTitle">Add transaction</h3>
+          </div>
+          <button class="icon-button dialog-close" type="button" id="closeDialogButton" aria-label="Close dialog">
+            Close
+          </button>
+        </div>
+
+        <input type="hidden" id="transactionId" />
+
+        <div class="form-grid">
+          <label class="field" for="transactionDate">
+            <span>Date</span>
+            <input id="transactionDate" type="date" required />
+          </label>
+
+          <label class="field" for="transactionAmount">
+            <span>Amount</span>
+            <input id="transactionAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required />
+          </label>
+
+          <label class="field" for="transactionType">
+            <span>Type</span>
+            <select id="transactionType" required>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </label>
+
+          <label class="field" for="transactionCategory">
+            <span>Category</span>
+            <input id="transactionCategory" list="categoryOptions" placeholder="Groceries" required />
+            <datalist id="categoryOptions"></datalist>
+          </label>
+
+          <label class="field" for="transactionMerchant">
+            <span>Merchant</span>
+            <input id="transactionMerchant" type="text" placeholder="Northstar Payroll" required />
+          </label>
+
+          <label class="field" for="transactionNote">
+            <span>Note</span>
+            <textarea id="transactionNote" rows="4" placeholder="Short context about the transaction"></textarea>
+          </label>
+        </div>
+
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" id="cancelDialogButton">Cancel</button>
+          <button class="primary-button" type="submit" id="saveTransactionButton">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+
+    <p class="sr-only" id="announcement" aria-live="polite"></p>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
